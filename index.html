@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <style>
+        /* Reset and Basic Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .todo-container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .input-area {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        #new-task {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        #add-task {
+            padding: 10px 20px;
+            border: none;
+            background-color: #28a745;
+            color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        #add-task:hover {
+            background-color: #218838;
+        }
+
+        #task-list {
+            list-style-type: none;
+        }
+
+        .task-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.3s ease;
+        }
+
+        .task-item:hover {
+            background-color: #f9f9f9;
+        }
+
+        .task-item.completed span {
+            text-decoration: line-through;
+            color: #888;
+        }
+
+        .task-item input[type="checkbox"] {
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .task-item button {
+            background-color: #dc3545;
+            border: none;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: opacity 0.3s ease;
+        }
+
+        .task-item button.edit {
+            background-color: #ffc107;
+            margin-right: 5px;
+        }
+
+        .task-item button:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="todo-container">
+        <h1>To-Do List</h1>
+        <div class="input-area">
+            <input type="text" id="new-task" placeholder="Enter a new task">
+            <button id="add-task">Add Task</button>
+        </div>
+        <ul id="task-list"></ul>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const taskInput = document.getElementById('new-task');
+            const addTaskButton = document.getElementById('add-task');
+            const taskList = document.getElementById('task-list');
+
+            // Add Task Functionality
+            addTaskButton.addEventListener('click', addTask);
+            taskInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') addTask();
+            });
+
+            function addTask() {
+                const taskText = taskInput.value.trim();
+                if (taskText) {
+                    const taskItem = createTaskElement(taskText);
+                    taskList.appendChild(taskItem);
+                    taskInput.value = '';
+                    taskInput.focus();
+                }
+            }
+
+            // Create Task Element
+            function createTaskElement(taskText) {
+                const taskItem = document.createElement('li');
+                taskItem.className = 'task-item';
+
+                const taskCheckbox = document.createElement('input');
+                taskCheckbox.type = 'checkbox';
+                taskCheckbox.addEventListener('change', toggleTaskCompletion);
+
+                const taskSpan = document.createElement('span');
+                taskSpan.textContent = taskText;
+
+                const editButton = document.createElement('button');
+                editButton.textContent = 'Edit';
+                editButton.className = 'edit';
+                editButton.addEventListener('click', editTask);
+
+                const removeButton = document.createElement('button');
+                removeButton.textContent = 'Remove';
+                removeButton.addEventListener('click', removeTask);
+
+                taskItem.appendChild(taskCheckbox);
+                taskItem.appendChild(taskSpan);
+                taskItem.appendChild(editButton);
+                taskItem.appendChild(removeButton);
+
+                return taskItem;
+            }
+
+            // Toggle Task Completion
+            function toggleTaskCompletion(event) {
+                const taskItem = event.target.closest('.task-item');
+                taskItem.classList.toggle('completed');
+            }
+
+            // Edit Task
+            function editTask(event) {
+                const taskItem = event.target.closest('.task-item');
+                const taskSpan = taskItem.querySelector('span');
+                const newText = prompt('Edit task:', taskSpan.textContent);
+                if (newText !== null && newText.trim()) {
+                    taskSpan.textContent = newText.trim();
+                }
+            }
+
+            // Remove Task
+            function removeTask(event) {
+                const taskItem = event.target.closest('.task-item');
+                taskList.removeChild(taskItem);
+            }
+        });
+    </script>
+</body>
+</html>
